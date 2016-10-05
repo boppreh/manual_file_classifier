@@ -34,7 +34,13 @@ for i, file in enumerate(files):
         pass
     elif action == 'd':
         file.unlink()
-    elif action in 'mr':
+    elif action == 'r':
+        new_name = input('New name: ').strip()
+        if new_name:
+            call(['mv', str(file), str(file.with_name(new_name))])
+        else:
+            print('No new name provided, skipping file.')
+    elif action == 'm':
         destination = input('Destination: ').strip()
         if destination:
             call(['mv', str(file), destination])
