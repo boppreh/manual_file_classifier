@@ -1,9 +1,12 @@
 #! /usr/bin/env python3
 import sys
 from pathlib import Path
-from subprocess import call
+from subprocess import call, check_output
 
 assert len(sys.argv) >= 2
+
+def is_binary(file):
+    return 'charset=binary' in check_output(['file', '-ib', str(file.absolute())]).decode('utf-8')
 
 if len(sys.argv) == 2:
     path = Path(sys.argv[1])
@@ -21,8 +24,12 @@ for i, file in enumerate(files):
     else:
         print("Classifying {} ({}/{})".format(file, i+1, len(files)))
 
-    call(['less', str(file.absolute())])
-    action = input('(k)eep, (d)elete, (r)ename or (m)ove? ').strip().lower()
+    if is_binary(file):
+        call(['file', '-b', str(file.absolute())])
+    else:
+        call(['less', str(file.absolute())])
+
+    action = input('(k)eep, (d)elete, (r)ename or (m)ove? ').strip().lower().lstrip('q')
     if action == 'k':
         pass
     elif action == 'd':
